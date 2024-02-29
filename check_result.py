@@ -13,7 +13,7 @@ def read_matrix(size, filename):
     return A
 
 def check_matrix(size):
-    res = open('check_result', 'a')
+    res = open('check_result.txt', 'a')
     A = read_matrix(size, 'matrix_A'+ str(size) + '.txt')
     B = read_matrix(size, 'matrix_B'+ str(size) + '.txt')
     C1 = read_matrix(size, 'matrix_C'+ str(size) + '.txt')
