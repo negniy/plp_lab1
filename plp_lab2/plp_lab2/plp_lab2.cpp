@@ -68,30 +68,51 @@ int main()
 
         for (int size : list_of_size)
         {
-            vector<vector<int>> A(size, vector<int>(size));
-            vector<vector<int>> B(size, vector<int>(size));
+            vector<int> V;
+            for (int i = 0; i < 10; i++) {
+                
+                vector<vector<int>> A(size, vector<int>(size));
+                vector<vector<int>> B(size, vector<int>(size));
 
-            filename1 = filename[0];
-            filename2 = filename[1];
-            read_matrix(filename1.append(to_string(size)).append(".txt"), A);
-            read_matrix(filename2.append(to_string(size)).append(".txt"), B);
+                filename1 = filename[0];
+                filename2 = filename[1];
+                read_matrix(filename1.append(to_string(size)).append(".txt"), A);
+                read_matrix(filename2.append(to_string(size)).append(".txt"), B);
 
-            //auto start = chrono::steady_clock::now();
-            double wtime = omp_get_wtime();
-            vector<vector<int>> C = mul_matrix(A, B);
-            wtime = omp_get_wtime() - wtime;
-            //auto end = chrono::steady_clock::now();
+                //auto start = chrono::steady_clock::now();
+                double wtime = omp_get_wtime();
+                vector<vector<int>> C = mul_matrix(A, B);
+                wtime = omp_get_wtime() - wtime;
+                //auto end = chrono::steady_clock::now();
 
-            res_filename = filename[2];
-            //write_matrix(res_filename.append(to_string(size)).append(".txt"), C);
+                res_filename = filename[2];
+                //write_matrix(res_filename.append(to_string(size)).append(".txt"), C);
 
-            string a = "time_result_";
-            string fn = a.append(to_string(threads)).append(".txt");
+                string a = "time_result_";
+                string fn = a.append(to_string(threads)).append(".txt");
+                ofstream result(fn, ios::app);
+                result << "Размер матрицы: " << size << "х" << size << " Время: " << wtime << endl;
+                V.push_back(wtime);
+                result.close();
+
+                cout << "Diff(s) = " << wtime << endl;
+            }
+            string a = "times_";
+            string fn = a.append(to_string(threads)).append("-").append(to_string(size)).append(".txt");
             ofstream result(fn, ios::app);
-            result << "Размер матрицы: " << size << "х" << size << " Время: " << wtime << endl;
+            double mean=0;
+            double disp=0;
+            for (int v : V) {
+                mean += v;
+            }
+            mean = mean / V.size();
+            for (int v : V) {
+                disp += (mean - v) * (mean - v);
+            }
+            disp = disp / V.size();
+            result << "Среднее: " << mean << endl;
+            result << "D: " << disp << endl;
             result.close();
-
-            cout << "Diff(ms) = " << wtime << endl;
         }
     }
     return 0;
